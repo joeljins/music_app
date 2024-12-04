@@ -1,0 +1,128 @@
+@@ -0,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Home</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="container">
+		<table id="outer" style="margin-left:auto;margin-right:auto;">
+			<tr>
+				<td>
+                    <table id="search" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
+                        <tr>
+                            <th style="font-size: xx-large; text-decoration-line: underline;">
+                                Search
+                            </th>
+                        <tr>
+                        <tr>
+                            <td>
+                                <label for="type" style="color:white;">Select type:</label>
+                                    <select id="searchtype" name="searchtype">
+                                        <option value=song>Song</option>
+                                        <option value=artist>Artist</option>
+                                        <option value=album>Album</option>
+                                    </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input id="searchinput" type="text" placeholder="Search">
+                            </td>
+                        </tr>
+                            <td></td>
+                        <tr>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large;">
+                                Results:
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table id="playlists" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
+                        <tr>
+                            <th style="font-size: xx-large; text-decoration-line: underline;">
+                                Playlists
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                Create new playlist:
+                                <button id="newplaylist">+</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large;">
+                                Your Playlists:
+                                <ul>
+                                    <li>Playlist 1</li>
+                                    <li>Playlist 2</li>
+                                    <li>Playlist 3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large;">
+                                Public Playlists:
+                                <ul>
+                                    <li>Public Playlist 1</li>
+                                    <li>Public Playlist 2</li>
+                                    <li>Public Playlist 3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table id="analytics" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
+                        <tr>
+                            <th style="font-size: xx-large; text-decoration-line: underline;">
+                                Analytics
+                            </th>
+                        </tr>
+                        <tr>
+                            <td>
+                                Generate new report:
+                                <button id="newreport">+</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large;">
+                                Your Reports:
+                                <ul>
+                                    <li>Personal Report 1</li>
+                                    <li>Personal Report 2</li>
+                                    <li>Personal Report 3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large;">
+                                Recent Reports:
+                                <ul>
+                                    <li>General Report 1</li>
+                                    <li>General Report 2</li>
+                                    <li>General Report 3</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                </td>
+            </tr>
+		</table>
+	</div>	
+	<div id="play">
+		<table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
+			<tr>
+				<th>Now Playing:</th>
+			</tr>
+		</table>
+	</div>
+</body>
+</html>
