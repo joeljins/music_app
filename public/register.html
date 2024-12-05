@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+</head>
+<body>
+  <div id="container">
+    <form id="registerForm">
+      <h2>Register</h2>
+      <label for="username">Username:</label>
+      <input id="username" type="text" name="username" placeholder="Enter your username" required>
+      
+      <label for="password">Password:</label>
+      <input id="password" type="password" name="password" placeholder="Enter your password" required>
+      
+      <label for="preferredName">Preferred Name (Optional):</label>
+      <input id="preferredName" type="text" name="preferredName" placeholder="Enter your preferred name">
+      
+      <label for="email">Email:</label>
+      <input id="email" type="email" name="email" placeholder="Enter your email" required maxlength="50">
+      
+      <button type="submit" id="registerButton">Register</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", async function(event) {
+      event.preventDefault(); // Prevent the form from submitting normally
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const preferredName = document.getElementById("preferredName").value;
+      const email = document.getElementById("email").value;
+
+      try {
+        const response = await fetch("/user/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ username, password, preferred_name: preferredName, email })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          alert("Registration successful!");
+          // Redirect to login page or another page
+          window.location.href = "/login.html";
+        } else {
+          alert(result.error || "Registration failed!");
+        }
+      } catch (error) {
+        console.error("Error during registration:", error);
+        alert("An error occurred. Please try again.");
+      }
+    });
+  </script>
+</body>
+</html>
