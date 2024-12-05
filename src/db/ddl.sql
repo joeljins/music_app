@@ -1,7 +1,7 @@
 -- Create the USERS table
 CREATE TABLE USERS (
     username VARCHAR(30) PRIMARY KEY,
-    password VARCHAR(50) NOT NULL,
+    password VARCHAR(255) NOT NULL,
     preferred_name VARCHAR(30),
     email VARCHAR(50) UNIQUE NOT NULL
 );
