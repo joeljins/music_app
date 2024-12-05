@@ -3,7 +3,7 @@ const path = require("path");
 const app = express();
 const router = require("./routes/router");
 
-app.use(express.json()); // Add this line if not already present
+app.use(express.json());
 app.use(express.static("public"));
 
 app.use("/", router);
