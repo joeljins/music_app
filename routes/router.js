@@ -1,21 +1,12 @@
 const express = require("express");
 const path = require("path");
-const { Pool } = require("pg");
+const pool = require("../db"); // Import the pool
 const router = express.Router();
 const getUserIdFromToken = require("./middleware.js");
 
-// Database configuration
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'music',
-  password: 'tester1234',
-  port: 5432, // Default PostgreSQL port
-});
-
 // Serve the main HTML file
 router.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../public", "index.html"));
+  res.sendFile(path.join(__dirname, "../public", "login.html"));
 });
 
 // Handle the search route
