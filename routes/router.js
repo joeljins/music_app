@@ -22,7 +22,6 @@ router.get("/", (req, res) => {
 router.post("/search", getUserIdFromToken, async (req, res) => {
   const userId = res.locals.user_id;
   const { type, query } = req.body;
-  console.log(userId);
 
   if (!type || !query) {
     return res.status(400).json({ error: "Type and query are required." });
