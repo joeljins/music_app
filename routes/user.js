@@ -32,7 +32,6 @@ userRouter.post("/authenticate", async (req, res) => {
       }
 
       const user = result.rows[0];
-      console.log(user);
       const passwordMatch = await bcrypt.compare(password, user.password);
 
       if (!passwordMatch) {
@@ -58,7 +57,6 @@ userRouter.post("/authenticate", async (req, res) => {
 
 // Register a new user
 userRouter.post("/register", async (req, res) => {
-    console.log("Request Body:", req.body);
     const { username, password, preferred_name, email } = req.body;
   
     // Validate input

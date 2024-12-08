@@ -4,7 +4,6 @@ const JWT_SECRET = "mAS2tdG8v7SWZEL8jIMqrD9knuWHmKhPQaqCbTZPec4=";
 
 const getUserIdFromToken = (req, res, next) => {
   const token = req.cookies?.token;
-  console.log("Cookies:", req.cookies);
 
   if (!token) {
       console.log("Token is missing in cookies");
@@ -13,7 +12,6 @@ const getUserIdFromToken = (req, res, next) => {
 
   try {
       const decoded = jwt.verify(token, JWT_SECRET);
-      console.log("Decoded token:", decoded);
 
       if (!decoded.userId) {
           console.error("userId missing in token");
