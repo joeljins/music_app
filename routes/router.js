@@ -31,7 +31,7 @@ router.post("/search", getUserIdFromToken, async (req, res) => {
 if (type === "artist") {
   sql = "SELECT artist_name AS result, 'artist' AS type FROM ARTISTS WHERE artist_name ILIKE $1;";
 } else if (type === "song") {
-  sql = "SELECT name AS result, 'song' AS type FROM SONGS WHERE name ILIKE $1;";
+  sql = "SELECT s.name AS result, 'song' AS type, a.album_name FROM SONGS s JOIN ALBUMS a ON s.album_id = a.album_id WHERE s.name ILIKE $1;";
 } else if (type === "album") {
   sql = "SELECT album_name AS result, 'album' AS type FROM ALBUMS WHERE album_name ILIKE $1;";
 }
@@ -71,6 +71,34 @@ router.get("/artist_songs", getUserIdFromToken, async (req, res) => {
     res.status(500).json({ error: "Database error." });
   }
 });
+
+router.get("/album_songs", getUserIdFromToken, async (req, res) => {
+  const albumName = req.query.query;
+
+  if (!albumName) {
+    return res.status(400).json({ error: "No album name provided." });
+  }
+
+  const sql = `
+    SELECT s.name AS song_name, s.year, s.duration, a.album_name, ar.artist_name
+    FROM SONGS s
+    JOIN ALBUMS a ON s.album_id = a.album_id
+    JOIN ARTISTS ar ON a.artist_id = ar.artist_id
+    WHERE a.album_name ILIKE $1
+    ORDER BY s.year, s.name;
+  `;
+
+  try {
+    const { rows } = await pool.query(sql, [albumName]);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error executing query:", err);
+    res.status(500).json({ error: "Database error." });
+  }
+});
+
+
+
 
 
 module.exports = router;
