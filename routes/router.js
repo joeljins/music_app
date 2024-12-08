@@ -9,7 +9,7 @@ const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
   database: 'music',
-  password: '11032002',
+  password: 'tester1234',
   port: 5432, // Default PostgreSQL port
 });
 
@@ -28,15 +28,14 @@ router.post("/search", getUserIdFromToken, async (req, res) => {
   }
 
   let sql;
-  if (type === "artist") {
-    sql = "SELECT artist_name AS result FROM ARTISTS WHERE artist_name ILIKE $1;";
-  } else if (type === "song") {
-    sql = "SELECT name AS result FROM SONGS WHERE name ILIKE $1;";
-  } else if (type === "album") {
-    sql = "SELECT album_name AS result FROM ALBUMS WHERE album_name ILIKE $1;";
-  } else {
-    return res.status(400).json({ error: "Invalid search type." });
-  }
+if (type === "artist") {
+  sql = "SELECT artist_name AS result, 'artist' AS type FROM ARTISTS WHERE artist_name ILIKE $1;";
+} else if (type === "song") {
+  sql = "SELECT name AS result, 'song' AS type FROM SONGS WHERE name ILIKE $1;";
+} else if (type === "album") {
+  sql = "SELECT album_name AS result, 'album' AS type FROM ALBUMS WHERE album_name ILIKE $1;";
+}
+
 
   try {
     const results = await pool.query(sql, [`%${query}%`]);
@@ -46,5 +45,32 @@ router.post("/search", getUserIdFromToken, async (req, res) => {
     res.status(500).json({ error: "Database error." });
   }
 });
+
+router.get("/artist_songs", getUserIdFromToken, async (req, res) => {
+  const userId = res.locals.user_id;
+  const artistName = req.query.query;
+
+  if (!artistName) {
+    return res.status(400).json({ error: "No artist name provided." });
+  }
+
+  const sql = `
+    SELECT s.name AS song_name, s.year, s.duration
+    FROM SONGS s
+    JOIN SONG_ARTISTS sa ON s.song_id = sa.song_id
+    JOIN ARTISTS a ON sa.artist_id = a.artist_id
+    WHERE a.artist_name ILIKE $1
+    ORDER BY s.year, s.name;
+  `;
+
+  try {
+    const { rows } = await pool.query(sql, [artistName]);
+    res.json(rows);
+  } catch (err) {
+    console.error("Error executing query:", err);
+    res.status(500).json({ error: "Database error." });
+  }
+});
+
 
 module.exports = router;

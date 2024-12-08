@@ -1,5 +1,12 @@
 <!DOCTYPE html>
 <html>
+  <style>
+    a {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -123,54 +130,63 @@
 			</tr>
 		</table>
 	</div>
-	<script>
-		async function performSearch() {
-			// Get the search type and input value
-			const type = document.getElementById("searchtype").value;
-			const query = document.getElementById("searchinput").value;
-            const token = localStorage.getItem("authToken"); // Get the token from localStorage
+<script>
+async function performSearch() {
+    const type = document.getElementById("searchtype").value;
+    const query = document.getElementById("searchinput").value;
+    const token = localStorage.getItem("authToken"); // Get the token from localStorage
 
-			if (!query) {
-				alert("Please enter a search term.");
-				return;
-			}
+    if (!query) {
+        alert("Please enter a search term.");
+        return;
+    }
 
-			try {
-				// Send a POST request to the backend
-				const response = await fetch("/search", {
-					method: "POST",
-					headers: { 
-                        "Content-Type": "application/json" ,
-                        "Authorization": `Bearer ${token}`,
-                    },
-					body: JSON.stringify({ type, query }),
-				});
+    try {
+        // Send a POST request to the backend
+        const response = await fetch("/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ type, query }),
+        });
 
-				const results = await response.json();
+        const results = await response.json();
 
-				// Get the results container
-				const resultsDiv = document.getElementById("results");
-				resultsDiv.innerHTML = ""; // Clear previous results
+        // Get the results container
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = ""; // Clear previous results
 
-				// Display results or an appropriate message
-				if (results.error) {
-					resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
-				} else if (results.length === 0) {
-					resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
-				} else {
-					const list = document.createElement("ul");
-					results.forEach((item) => {
-						const listItem = document.createElement("li");
-						listItem.textContent = item.result;
-						list.appendChild(listItem);
-					});
-					resultsDiv.appendChild(list);
-				}
-			} catch (err) {
-				console.error("Error:", err);
-				alert("An error occurred while performing the search.");
-			}
-		}
-	</script>
+        // Display results or an appropriate message
+        if (results.error) {
+            resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
+        } else if (results.length === 0) {
+            resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
+        } else {
+            const list = document.createElement("ul");
+            results.forEach((item) => {
+                const listItem = document.createElement("li");
+
+                // If it's an artist result, make it a clickable link
+            if (item.type === "artist") {
+              const link = document.createElement("a");
+              link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
+              link.textContent = item.result;
+              listItem.appendChild(link);
+            } else {
+              listItem.textContent = item.result;
+            }
+
+                list.appendChild(listItem);
+            });
+            resultsDiv.appendChild(list);
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        alert("An error occurred while performing the search.");
+    }
+}
+</script>
 </body>
 </html>
