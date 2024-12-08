@@ -47,20 +47,22 @@ if (type === "artist") {
 });
 
 router.get("/artist_songs", getUserIdFromToken, async (req, res) => {
-  const userId = res.locals.user_id;
   const artistName = req.query.query;
-
   if (!artistName) {
     return res.status(400).json({ error: "No artist name provided." });
   }
 
   const sql = `
-    SELECT s.name AS song_name, s.year, s.duration
+    SELECT s.name AS song_name,
+           s.year,
+           s.duration,
+           a.album_name
     FROM SONGS s
+    JOIN ALBUMS a ON s.album_id = a.album_id
     JOIN SONG_ARTISTS sa ON s.song_id = sa.song_id
-    JOIN ARTISTS a ON sa.artist_id = a.artist_id
-    WHERE a.artist_name ILIKE $1
-    ORDER BY s.year, s.name;
+    JOIN ARTISTS ar ON sa.artist_id = ar.artist_id
+    WHERE ar.artist_name ILIKE $1
+    ORDER BY a.album_name, s.year, s.name;
   `;
 
   try {
@@ -71,6 +73,7 @@ router.get("/artist_songs", getUserIdFromToken, async (req, res) => {
     res.status(500).json({ error: "Database error." });
   }
 });
+
 
 router.get("/album_songs", getUserIdFromToken, async (req, res) => {
   const albumName = req.query.query;

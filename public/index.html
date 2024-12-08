@@ -169,20 +169,26 @@ async function performSearch() {
                 const listItem = document.createElement("li");
 
                 // If it's an artist result, make it a clickable link
-            if (item.type === "artist") {
-              const link = document.createElement("a");
-              link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
-              link.textContent = item.result;
-              listItem.appendChild(link);
-            } else if (item.type === "song") {
-              const link = document.createElement("a");
-              // Redirect to albumSongs.html, passing the album_name as query parameter
-              link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.album_name)}`;
-              link.textContent = item.result; // display the song name
-              listItem.appendChild(link);
-            } else {
-              listItem.textContent = item.result;
-            }
+// Inside the forEach(item) loop in your performSearch() function
+if (item.type === "artist") {
+    // Already handled artist link creation here
+    const link = document.createElement("a");
+    link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
+    link.textContent = item.result;
+    listItem.appendChild(link);
+
+} else if (item.type === "album") {
+    // Now handle albums by making them clickable links
+    const link = document.createElement("a");
+    link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
+    link.textContent = item.result;
+    listItem.appendChild(link);
+
+} else if (item.type === "song") {
+    // For songs, we no longer redirect to the album. Just show the song text.
+    listItem.textContent = item.result;
+}
+
 
                 list.appendChild(listItem);
             });
