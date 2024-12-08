@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 90%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        a {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">All Songs</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Song Title</th>
+                <th>Year</th>
+                <th>Duration</th>
+                <th>Artist(s)</th>
+                <th>Album</th>
+            </tr>
+        </thead>
+        <tbody id="song-list">
+            <!-- Song data will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchSongs() {
+            try {
+                const response = await fetch("/all_songs");
+                const songs = await response.json();
+
+                const songList = document.getElementById("song-list");
+                songList.innerHTML = "";
+
+                songs.forEach(song => {
+                    const row = document.createElement("tr");
+
+                    // Song Title with Link to Play Page
+                    const titleCell = document.createElement("td");
+                    const titleLink = document.createElement("a");
+                    titleLink.href = `playSong.html?song_id=${song.song_id}`;
+                    titleLink.textContent = song.song_name;
+                    titleCell.appendChild(titleLink);
+
+                    // Year
+                    const yearCell = document.createElement("td");
+                    yearCell.textContent = song.year || "N/A";
+
+                    // Duration
+                    const durationCell = document.createElement("td");
+                    durationCell.textContent = formatDuration(song.duration);
+
+                    // Artist(s) with Links
+                    const artistCell = document.createElement("td");
+                    const artistLink = document.createElement("a");
+                    artistLink.href = `artistSongs.html?query=${encodeURIComponent(song.artist_name)}`;
+                    artistLink.textContent = song.artist_name || "N/A";
+                    artistCell.appendChild(artistLink);
+
+                    // Album with Link
+                    const albumCell = document.createElement("td");
+                    if (song.album_name) {
+                        const albumLink = document.createElement("a");
+                        albumLink.href = `albumSongs.html?query=${encodeURIComponent(song.album_name)}`;
+                        albumLink.textContent = song.album_name;
+                        albumCell.appendChild(albumLink);
+                    } else {
+                        albumCell.textContent = "N/A";
+                    }
+
+                    // Append all cells to the row
+                    row.appendChild(titleCell);
+                    row.appendChild(yearCell);
+                    row.appendChild(durationCell);
+                    row.appendChild(artistCell);
+                    row.appendChild(albumCell);
+
+                    // Append the row to the table body
+                    songList.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching songs:", err);
+            }
+        }
+
+        function formatDuration(ms) {
+            if (!ms) return "N/A";
+            const minutes = Math.floor(ms / 60000);
+            const seconds = ((ms % 60000) / 1000).toFixed(0);
+            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+
+        // Fetch songs on page load
+        fetchSongs();
+    </script>
+</body>
+</html>
