@@ -17,37 +17,42 @@ const pool = new Pool({
 // Middleware to parse JSON
 userRouter.use(express.json());
 
-// Authenticate user and generate a token
 userRouter.post("/authenticate", async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ error: "Username and password are required." });
+      return res.status(400).json({ error: "Username and password are required." });
   }
 
   try {
-    // Check if the user exists in the database
-    const result = await pool.query('SELECT * FROM "users" WHERE username = $1', [username]);
+      const result = await pool.query('SELECT * FROM "users" WHERE username = $1', [username]);
 
-    if (result.rows.length === 0) {
-      return res.status(401).json({ error: "Invalid username or password." });
-    }
+      if (result.rows.length === 0) {
+          return res.status(401).json({ error: "Invalid username or password." });
+      }
 
-    const user = result.rows[0];
+      const user = result.rows[0];
+      console.log(user);
+      const passwordMatch = await bcrypt.compare(password, user.password);
 
-    const passwordMatch = await bcrypt.compare(password, user.password); // Compare user input vs stored hash
-    if (!passwordMatch) {
-        return res.status(401).json({ error: "Invalid username or password." });
-    }
-      
+      if (!passwordMatch) {
+          return res.status(401).json({ error: "Invalid username or password." });
+      }
 
-    // Generate a JWT token
-    const token = jwt.sign({ userId: user.id }, "mAS2tdG8v7SWZEL8jIMqrD9knuWHmKhPQaqCbTZPec4=", { expiresIn: "1h" });
+      // Generate JWT token
+      const token = jwt.sign({ userId: user.username }, "mAS2tdG8v7SWZEL8jIMqrD9knuWHmKhPQaqCbTZPec4=", { expiresIn: "1h" });
 
-    res.json({ message: "Authentication successful", token });
+      // Set the token in an HTTP-only cookie
+      res.cookie("token", token, {
+          httpOnly: true, // Prevents client-side JavaScript from accessing the cookie
+          sameSite: "strict", // Prevent CSRF
+          maxAge: 3600000 // 1 hour
+      });
+
+      res.json({ message: "Authentication successful" });
   } catch (err) {
-    console.error("Error during authentication:", err);
-    res.status(500).json({ error: "Internal server error." });
+      console.error("Error during authentication:", err);
+      res.status(500).json({ error: "Internal server error." });
   }
 });
 

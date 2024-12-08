@@ -128,6 +128,7 @@
 			// Get the search type and input value
 			const type = document.getElementById("searchtype").value;
 			const query = document.getElementById("searchinput").value;
+            const token = localStorage.getItem("authToken"); // Get the token from localStorage
 
 			if (!query) {
 				alert("Please enter a search term.");
@@ -138,7 +139,10 @@
 				// Send a POST request to the backend
 				const response = await fetch("/search", {
 					method: "POST",
-					headers: { "Content-Type": "application/json" },
+					headers: { 
+                        "Content-Type": "application/json" ,
+                        "Authorization": `Bearer ${token}`,
+                    },
 					body: JSON.stringify({ type, query }),
 				});
 

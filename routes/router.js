@@ -2,13 +2,14 @@ const express = require("express");
 const path = require("path");
 const { Pool } = require("pg");
 const router = express.Router();
+const getUserIdFromToken = require("./middleware.js");
 
 // Database configuration
 const pool = new Pool({
   user: 'postgres',
   host: 'localhost',
-  database: 'dragon_music',
-  password: 'password',
+  database: 'music',
+  password: '11032002',
   port: 5432, // Default PostgreSQL port
 });
 
@@ -18,8 +19,10 @@ router.get("/", (req, res) => {
 });
 
 // Handle the search route
-router.post("/search", async (req, res) => {
+router.post("/search", getUserIdFromToken, async (req, res) => {
+  const userId = res.locals.user_id;
   const { type, query } = req.body;
+  console.log(userId);
 
   if (!type || !query) {
     return res.status(400).json({ error: "Type and query are required." });
