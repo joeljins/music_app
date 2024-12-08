@@ -1,18 +1,9 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
-const { Pool } = require("pg");
+const pool = require("../db"); // Import the pool
 
 const userRouter = express.Router();
-
-// Configure the PostgreSQL pool
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'music',
-  password: '11032002',
-  port: 5432,
-});
 
 // Middleware to parse JSON
 userRouter.use(express.json());

@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
-const { Pool } = require("pg");
 const cookieParser = require("cookie-parser");
+const pool = require("./db"); // Import the pool from db.js
 const router = require("./routes/router");
 const userRouter = require("./routes/user");
 
@@ -11,25 +11,15 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(cookieParser());
 
-// Configure the PostgreSQL pool
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "music",
-  password: "11032002",
-  port: 5432,
-});
-
 // Function to initialize the database connection
 async function initializeDatabaseConnection() {
   try {
-    // Test the database connection
     const client = await pool.connect();
     console.log("Connected to the PostgreSQL database successfully.");
-    client.release(); // Release the client back to the pool
+    client.release();
   } catch (error) {
     console.error("Error connecting to the PostgreSQL database:", error);
-    process.exit(1); // Exit the process if the database connection fails
+    process.exit(1);
   }
 }
 
