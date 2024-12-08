@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Artist Songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin: 10px 0;
+            padding: 8px;
+            border: 1px solid #ccc;
+        }
+
+        .song-info {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .song-info div {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 id="artist-name">Songs by Artist</h1>
+        <div id="song-results">
+            <!-- The songs will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // Function to parse query parameters from the URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.slice(1);
+            const pairs = queryString.split("&");
+            for (const pair of pairs) {
+                const [key, value] = pair.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+            }
+            return params;
+        }
+
+        async function fetchArtistSongs(artistName) {
+            const token = localStorage.getItem("authToken");
+            try {
+                const response = await fetch(`/artist_songs?query=${encodeURIComponent(artistName)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch songs for the artist.");
+                }
+
+                const songs = await response.json();
+                return songs;
+            } catch (err) {
+                console.error("Error fetching artist songs:", err);
+                alert("An error occurred while fetching artist songs.");
+                return [];
+            }
+        }
+
+        function displaySongs(artistName, songs) {
+            const artistNameElement = document.getElementById("artist-name");
+            artistNameElement.textContent = `Songs by ${artistName}`;
+
+            const songResults = document.getElementById("song-results");
+            songResults.innerHTML = "";
+
+            if (songs.length === 0) {
+                songResults.innerHTML = `<p>No songs found for "${artistName}".</p>`;
+                return;
+            }
+
+            const list = document.createElement("ul");
+            songs.forEach(song => {
+                const listItem = document.createElement("li");
+
+                const songInfoContainer = document.createElement("div");
+                songInfoContainer.className = "song-info";
+
+                const songNameDiv = document.createElement("div");
+                songNameDiv.textContent = `Title: ${song.song_name}`;
+
+                const yearDiv = document.createElement("div");
+                yearDiv.textContent = `Year: ${song.year || 'N/A'}`;
+
+                const durationDiv = document.createElement("div");
+                durationDiv.textContent = `Duration: ${formatDuration(song.duration)}`;
+
+                songInfoContainer.appendChild(songNameDiv);
+                songInfoContainer.appendChild(yearDiv);
+                songInfoContainer.appendChild(durationDiv);
+
+                listItem.appendChild(songInfoContainer);
+                list.appendChild(listItem);
+            });
+
+            songResults.appendChild(list);
+        }
+
+        function formatDuration(ms) {
+            if (!ms) return 'N/A';
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // On page load:
+        (async function() {
+            const params = getQueryParams();
+            const artistName = params.query || "";
+            if (!artistName) {
+                alert("No artist specified.");
+                return;
+            }
+
+            const songs = await fetchArtistSongs(artistName);
+            displaySongs(artistName, songs);
+        })();
+    </script>
+</body>
+</html>
