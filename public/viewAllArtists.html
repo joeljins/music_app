@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Artists</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h1 style="text-align: center;">All Artists</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Artist Name</th>
+                <th>View All Songs</th>
+            </tr>
+        </thead>
+        <tbody id="artist-list">
+            <!-- Artist data will be dynamically added here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchArtists() {
+            try {
+                const response = await fetch("/all_artists");
+                const artists = await response.json();
+
+                const artistList = document.getElementById("artist-list");
+                artistList.innerHTML = "";
+
+                artists.forEach(artist => {
+                    const row = document.createElement("tr");
+
+                    const nameCell = document.createElement("td");
+                    nameCell.textContent = artist.artist_name;
+
+                    const viewCell = document.createElement("td");
+                    const viewLink = document.createElement("a");
+                    viewLink.href = `artistSongs.html?query=${encodeURIComponent(artist.artist_name)}`;
+                    viewLink.textContent = "Songs";
+                    viewCell.appendChild(viewLink);
+
+                    row.appendChild(nameCell);
+                    row.appendChild(viewCell);
+
+                    artistList.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Error fetching artists:", err);
+            }
+        }
+
+        // Fetch artists on page load
+        fetchArtists();
+    </script>
+</body>
+</html>

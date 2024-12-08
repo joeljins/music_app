@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
-  <style>
-    a {
-      color: blue;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-  </style>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Home</title>
-	<link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        a {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-	<div id="container">
-		<table id="outer" style="margin-left:auto;margin-right:auto;">
-			<tr>
-				<td>
+    <div id="container">
+        <table id="outer" style="margin-left:auto;margin-right:auto;">
+            <tr>
+                <td>
                     <table id="search" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
                         <tr>
                             <th style="font-size: xx-large; text-decoration-line: underline;">
@@ -46,6 +46,14 @@
                                 <div id="results" style="border: 1px solid green; margin-top: 10px; padding: 10px;">
                                     <!-- Results will be displayed here -->
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large; text-align:center;">
+                                <!-- New Buttons for viewing all entries -->
+                                <button onclick="window.location.href='viewAllSongs.html'">View All Songs</button>
+                                <button onclick="window.location.href='viewAllArtists.html'">View All Artists</button>
+                                <button onclick="window.location.href='viewAllAlbums.html'">View All Albums</button>
                             </td>
                         </tr>
                     </table>
@@ -121,84 +129,83 @@
                     </table>
                 </td>
             </tr>
-		</table>
-	</div>	
-	<div id="play">
-		<table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
-			<tr>
-				<th>Now Playing:</th>
-			</tr>
-		</table>
-	</div>
-<script>
-async function performSearch() {
-    const type = document.getElementById("searchtype").value;
-    const query = document.getElementById("searchinput").value;
-    const token = localStorage.getItem("authToken"); // Get the token from localStorage
+        </table>
+    </div>
+    <div id="play">
+        <table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
+            <tr>
+                <th>Now Playing:</th>
+            </tr>
+        </table>
+    </div>
+    <script>
+    async function performSearch() {
+        const type = document.getElementById("searchtype").value;
+        const query = document.getElementById("searchinput").value;
+        const token = localStorage.getItem("authToken"); // Get the token from localStorage
 
-    if (!query) {
-        alert("Please enter a search term.");
-        return;
-    }
+        // Removed the check for empty query so that empty = show all results
+        // if (!query) {
+        //     alert("Please enter a search term.");
+        //     return;
+        // }
 
-    try {
-        // Send a POST request to the backend
-        const response = await fetch("/search", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
-            },
-            body: JSON.stringify({ type, query }),
-        });
-
-        const results = await response.json();
-
-        // Get the results container
-        const resultsDiv = document.getElementById("results");
-        resultsDiv.innerHTML = ""; // Clear previous results
-
-        // Display results or an appropriate message
-        if (results.error) {
-            resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
-        } else if (results.length === 0) {
-            resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
-        } else {
-            const list = document.createElement("ul");
-            results.forEach((item) => {
-                const listItem = document.createElement("li");
-
-                // If it's an artist result, make it a clickable link
-// Inside the forEach(item) loop in your performSearch() function
-if (item.type === "artist") {
-    // Already handled artist link creation here
-    const link = document.createElement("a");
-    link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
-    link.textContent = item.result;
-    listItem.appendChild(link);
-
-} else if (item.type === "album") {
-    // Now handle albums by making them clickable links
-    const link = document.createElement("a");
-    link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
-    link.textContent = item.result;
-    listItem.appendChild(link);
-
-} else if (item.type === "song") {
-    // For songs, we no longer redirect to the album. Just show the song text.
-    listItem.textContent = item.result;
-}
-
-
-                list.appendChild(listItem);
+        try {
+            // Send a POST request to the backend
+            const response = await fetch("/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ type, query }),
             });
-            resultsDiv.appendChild(list);
+
+            const results = await response.json();
+
+            // Get the results container
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
+
+            // Display results or an appropriate message
+            if (results.error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
+            } else if (results.length === 0) {
+                resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
+            } else {
+                const list = document.createElement("ul");
+                results.forEach((item) => {
+                    const listItem = document.createElement("li");
+
+                    if (item.type === "artist") {
+                        const link = document.createElement("a");
+                        link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
+                    } else if (item.type === "album") {
+                        const link = document.createElement("a");
+                        link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
+                    } else if (item.type === "song") {
+                        listItem.textContent = item.result;
+                    }
+
+                    list.appendChild(listItem);
+                });
+                resultsDiv.appendChild(list);
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            alert("An error occurred while performing the search.");
         }
-    } catch (err) {
-        console.error("Error:", err);
-        alert("An error occurred while performing the search.");
     }
-}
-</script>
+
+    function viewAll(type) {
+        document.getElementById("searchtype").value = type;
+        document.getElementById("searchinput").value = "";
+        performSearch();
+    }
+    </script>
 </body>
 </html>
