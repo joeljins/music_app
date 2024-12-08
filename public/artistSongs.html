@@ -126,7 +126,7 @@
 
         function displayAlbums(artistName, songs) {
             const artistNameElement = document.getElementById("artist-name");
-            artistNameElement.textContent = `Albums by ${artistName}`;
+            artistNameElement.textContent = `Albums/Songs by ${artistName}`;
 
             const albumResults = document.getElementById("album-results");
             albumResults.innerHTML = "";
@@ -165,7 +165,14 @@
                     songDiv.className = "song-info";
 
                     const songNameDiv = document.createElement("div");
-                    songNameDiv.textContent = `Title: ${song.song_name}`;
+
+                    const link = document.createElement("a");
+                    // Assuming you have a page called playSong.html that plays a given song.
+                    link.href = `playSong.html?song_id=${encodeURIComponent(song.song_id)}`;
+                    link.textContent = `Title: ${song.song_name}`;
+
+                    songNameDiv.appendChild(link);
+
 
                     const yearDiv = document.createElement("div");
                     yearDiv.textContent = `Year: ${song.year || 'N/A'}`;

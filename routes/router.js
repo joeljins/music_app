@@ -53,7 +53,7 @@ router.get("/artist_songs", getUserIdFromToken, async (req, res) => {
   }
 
   const sql = `
-    SELECT s.name AS song_name,
+    SELECT s.song_id, s.name AS song_name,
            s.year,
            s.duration,
            a.album_name
@@ -83,7 +83,7 @@ router.get("/album_songs", getUserIdFromToken, async (req, res) => {
   }
 
   const sql = `
-    SELECT s.name AS song_name, s.year, s.duration, a.album_name, ar.artist_name
+    SELECT s.song_id, s.name AS song_name, s.year, s.duration, a.album_name, ar.artist_name
     FROM SONGS s
     JOIN ALBUMS a ON s.album_id = a.album_id
     JOIN ARTISTS ar ON a.artist_id = ar.artist_id
