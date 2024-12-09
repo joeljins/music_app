@@ -1,13 +1,4 @@
-const { Pool } = require('pg');
-
-// Database configuration
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'music',
-  password: 'tester1234',
-  port: 5432, // Default PostgreSQL port
-});
+const pool = require("../db"); // Import the pool
 
 // Function to search for artists
 async function searchArtists(userEntry) {

@@ -1,4 +1,4 @@
-const { Client } = require("pg");
+const { Client, Pool } = require("pg");
 const fs = require("fs");
 
 // Load environment variables from env.json
@@ -68,4 +68,18 @@ async function setupDatabase() {
   }
 }
 
-setupDatabase();
+// Create a reusable connection pool
+const pool = new Pool(targetConfig);
+
+// Export the pool for use in other files
+module.exports = { setupDatabase, pool };
+
+// Call setupDatabase in this file
+(async () => {
+  try {
+    await setupDatabase(); // Call the setupDatabase function
+    console.log("Database setup completed successfully.");
+  } catch (error) {
+    console.error("Error during database setup:", error.message);
+  }
+})();

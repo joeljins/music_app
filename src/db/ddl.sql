@@ -164,6 +164,6 @@ VALUES
 INSERT INTO RATINGS (song_id, username, rating)
 VALUES 
 ('3G5iN5QBqMeXx3uZPy8tgB', 'jsmith23', 3),
-('55h7vJchibLdUkxdlX3fK7', 'amiller', 5);
+('55h7vJchibLdUkxdlX3fK7', 'amiller', 5),
 ('55h7vJchibLdUkxdlX3fK7', 'eroberts', 5);
 

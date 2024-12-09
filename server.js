@@ -1,7 +1,7 @@
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const pool = require("./db"); // Import the pool from db.js
+const { setupDatabase, pool } = require("./src/db/setup");
 const router = require("./routes/router");
 const userRouter = require("./routes/user");
 const playlistRouter = require("./routes/playlist");
