@@ -1,157 +1,157 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Login</title>
-	<style>
-		/* Reset some default styles */
-		body, h1, label, input, button {
-			margin: 0;
-			padding: 0;
-			box-sizing: border-box;
-		}
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
+    <title>Login</title>
+    <style>
+        /* Reset some default styles */
+        body, h1, label, input, button {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-		body {
-			font-family: Arial, sans-serif;
-			background-color: #f0f0f0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			height: 100vh;
-			margin: 0;
-		}
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
 
-		#container {
-			background-color: #fff;
-			padding: 20px 30px;
-			border-radius: 8px;
-			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-			width: 100%;
-			max-width: 400px;
-		}
+        #container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
 
-		form {
-			width: 100%;
-		}
+        form {
+            width: 100%;
+        }
 
-		h1, th {
-			margin-bottom: 20px;
-			font-size: 24px;
-			color: #333;
-			text-align: center;
-		}
+        h1, th {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+        }
 
-		label {
-			display: block;
-			margin-bottom: 5px;
-			font-size: 14px;
-			color: #555;
-			font-weight: bold;
-		}
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #555;
+            font-weight: bold;
+        }
 
-		input {
-			width: 100%;
-			padding: 10px;
-			margin-bottom: 15px;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			font-size: 14px;
-		}
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+        }
 
-		input:focus {
-			border-color: #4a90e2;
-			outline: none;
-			box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
-		}
+        input:focus {
+            border-color: #4a90e2;
+            outline: none;
+            box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+        }
 
-		button {
-			width: 100%;
-			padding: 10px;
-			background-color: #4a90e2;
-			color: white;
-			border: none;
-			border-radius: 4px;
-			font-size: 16px;
-			cursor: pointer;
-			transition: background-color 0.3s;
-		}
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
 
-		button:hover {
-			background-color: #357abd;
-		}
+        button:hover {
+            background-color: #357abd;
+        }
 
-		button:active {
-			background-color: #2c669d;
-		}
+        button:active {
+            background-color: #2c669d;
+        }
 
-		/* Styling for the register section */
-		#register-section {
-			margin-top: 20px;
-			text-align: center;
-		}
+        /* Styling for the register section */
+        #register-section {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-		#register-section button {
-			width: auto;
-			background-color: #f0f0f0;
-			color: #333;
-			border: 1px solid #ccc;
-			margin-top: 10px;
-		}
+        #register-section button {
+            width: auto;
+            background-color: #f0f0f0;
+            color: #333;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
 
-		#register-section button:hover {
-			background-color: #e0e0e0;
-		}
+        #register-section button:hover {
+            background-color: #e0e0e0;
+        }
 
-		#register-section button:active {
-			background-color: #d0d0d0;
-		}
+        #register-section button:active {
+            background-color: #d0d0d0;
+        }
 
-		/* Responsive design for smaller screens */
-		@media (max-width: 480px) {
-			#container {
-				padding: 15px;
-			}
+        /* Responsive design for smaller screens */
+        @media (max-width: 480px) {
+            #container {
+                padding: 15px;
+            }
 
-			h1, th {
-				font-size: 20px;
-			}
+            h1, th {
+                font-size: 20px;
+            }
 
-			button {
-				font-size: 14px;
-			}
-		}
-	</style>
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
 <body>
-	<div id="container">
-		<form id="loginForm">
-			<h1>Log In</h1>
-			<label for="username">Username</label>
-			<input id="username" type="text" placeholder="Enter your username" required>
+<div id="container">
+    <form id="loginForm">
+        <h1>Log In</h1>
+        <label for="username">Username</label>
+        <input id="username" placeholder="Enter your username" required type="text">
 
-			<label for="password">Password</label>
-			<input id="password" type="password" placeholder="Enter your password" required>
+        <label for="password">Password</label>
+        <input id="password" placeholder="Enter your password" required type="password">
 
-			<button type="submit">Submit</button>
-		</form>
+        <button type="submit">Submit</button>
+    </form>
 
-		<div id="register-section">
-			<p>Don't have an account?</p>
-			<button type="button" onclick="redirectToRegister()">Register</button>
-		</div>
-	</div>
-	<script src="script.js"></script>
-	<script>
-		// Redirection to the registration page
-		function redirectToRegister() {
-			window.location.href = "register.html";
-		}
+    <div id="register-section">
+        <p>Don't have an account?</p>
+        <button onclick="redirectToRegister()" type="button">Register</button>
+    </div>
+</div>
+<script src="script.js"></script>
+<script>
+    // Redirection to the registration page
+    function redirectToRegister() {
+        window.location.href = "register.html";
+    }
 
-		document.getElementById("loginForm").addEventListener("submit", function(event) {
-			event.preventDefault();
-			alert("Login form submitted!");
-		});
-	</script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        alert("Login form submitted!");
+    });
+</script>
 </body>
 </html>

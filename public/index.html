@@ -2,9 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta content="width=device-width, initial-scale=1" name="viewport">
     <title>Home</title>
-    <link rel="stylesheet" href="style.css">
+    <link href="style.css" rel="stylesheet">
     <style>
         a {
             color: blue;
@@ -14,184 +14,184 @@
     </style>
 </head>
 <body>
-    <div id="container">
-        <table id="outer" style="margin-left:auto;margin-right:auto;">
-            <tr>
-                <td>
-                    <table id="search" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
-                        <tr>
-                            <th style="font-size: xx-large; text-decoration-line: underline;">
-                                Search
-                            </th>
-                        </tr>
-                        <tr>
-                            <td>
-                                <label for="type" style="color:white;">Select type:</label>
-                                <select id="searchtype" name="searchtype">
-                                    <option value="song">Song</option>
-                                    <option value="artist">Artist</option>
-                                    <option value="album">Album</option>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <input id="searchinput" type="text" placeholder="Search">
-                                <button onclick="performSearch()">Search</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: large;">
-                                Results:
-                                <div id="results" style="border: 1px solid green; margin-top: 10px; padding: 10px;">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="font-size: large; text-align:center;">
+<div id="container">
+    <table id="outer" style="margin-left:auto;margin-right:auto;">
+        <tr>
+            <td>
+                <table id="search" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
+                    <tr>
+                        <th style="font-size: xx-large; text-decoration-line: underline;">
+                            Search
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label for="type" style="color:white;">Select type:</label>
+                            <select id="searchtype" name="searchtype">
+                                <option value="song">Song</option>
+                                <option value="artist">Artist</option>
+                                <option value="album">Album</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input id="searchinput" placeholder="Search" type="text">
+                            <button onclick="performSearch()">Search</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: large;">
+                            Results:
+                            <div id="results" style="border: 1px solid green; margin-top: 10px; padding: 10px;">
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="font-size: large; text-align:center;">
                             <button onclick="viewAll('viewAllSongs.html')">View All Songs</button>
                             <button onclick="viewAll('viewAllArtists.html')">View All Artists</button>
                             <button onclick="viewAll('viewAllAlbums.html')">View All Albums</button>
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-                <td>
-                    <table id="playlists" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
-                        <tr>
-                            <th style="font-size: xx-large; text-decoration-line: underline;">
-                                Playlists
-                            </th>
-                        </tr>
-                        <tr >
-                            <td>
-                                Create new playlist:
-                                <button id="newplaylist">+</button>
-                            </td>
-                            <td>
-                                <table id="add_playlist">
-                                </table>
-                            </td> 
-                        </tr>
-                        <tr>
-                            <td id ="song">
-                                Add song:
-                                <button id="add_song">+</button>
-                            </td>
-                        </tr>
-                        <tr>
-                        </tr>
-                        <tr>
-                            <td style="font-size: large;">
-                                Your Playlists:
-                                <button id="display_playlists">+</button>
-                                <table id="your_playlists"></table>
-                            </td>
-                        </tr>
-                        <tr>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-		</table>
-	</div>
-    <script src="playlist_script.js"></script>
-	<script>
-		async function performSearch() {
-			// Get the search type and input value
-			const type = document.getElementById("searchtype").value;
-			const query = document.getElementById("searchinput").value;
-            const token = localStorage.getItem("authToken"); // Get the token from localStorage
-
-        try {
-            // Send a POST request
-            const response = await fetch("/search", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
-                body: JSON.stringify({ type, query }),
-            });
-
-            const results = await response.json();
-
-            // Get the results
-            const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = ""; 
-
-            // Display results or message
-            if (results.error) {
-                resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
-            } else if (results.length === 0) {
-                resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
-            } else {
-                const list = document.createElement("ul");
-                results.forEach((item) => {
-                    const listItem = document.createElement("li");
-
-                    if (item.type === "artist") {
-                        const link = document.createElement("a");
-                        link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
-                        link.textContent = item.result;
-                        listItem.appendChild(link);
-                    } else if (item.type === "album") {
-                        const link = document.createElement("a");
-                        link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
-                        link.textContent = item.result;
-                        listItem.appendChild(link);
-                    } else if (item.type === "song") {
-                        const link = document.createElement("a");
-                        link.href = `playSong.html?song_id=${encodeURIComponent(item.song_id)}`;
-                        link.textContent = item.result;
-                        listItem.appendChild(link);
-                    }
-
-                    list.appendChild(listItem);
-                });
-                resultsDiv.appendChild(list);
-            }
-                    if (response.status === 401) {
-            // Redirect to login if unauthorized
-            alert("You must be logged in to view this page.");
-            window.location.href = "login.html";
-            return;
-        }
-        } catch (err) {
-            console.error("Error:", err);
-            alert("An error occurred while performing the search.");
-        }
-    }
-
-        async function viewAll(page) {
-    const token = localStorage.getItem("authToken"); // Get the token from localStorage
+                        </td>
+                    </tr>
+                </table>
+            </td>
+            <td>
+                <table id="playlists" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
+                    <tr>
+                        <th style="font-size: xx-large; text-decoration-line: underline;">
+                            Playlists
+                        </th>
+                    </tr>
+                    <tr>
+                        <td>
+                            Create new playlist:
+                            <button id="newplaylist">+</button>
+                        </td>
+                        <td>
+                            <table id="add_playlist">
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td id="song">
+                            Add song:
+                            <button id="add_song">+</button>
+                        </td>
+                    </tr>
+                    <tr>
+                    </tr>
+                    <tr>
+                        <td style="font-size: large;">
+                            Your Playlists:
+                            <button id="display_playlists">+</button>
+                            <table id="your_playlists"></table>
+                        </td>
+                    </tr>
+                    <tr>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>
+<script src="playlist_script.js"></script>
+<script>
+    async function performSearch() {
+        // Get the search type and input value
+        const type = document.getElementById("searchtype").value;
+        const query = document.getElementById("searchinput").value;
+        const token = localStorage.getItem("authToken"); // Get the token from localStorage
 
     try {
-        // Attempt to access a secured route to check if the token is valid
+        // Send a POST request
         const response = await fetch("/search", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`,
             },
-            body: JSON.stringify({ type: "check", query: "" }),
+            body: JSON.stringify({ type, query }),
         });
 
-        if (response.status === 401) {
-            // Redirect to login if unauthorized
-            alert("You must be logged in to view this page.");
-            window.location.href = "login.html";
-            return;
-        }
+        const results = await response.json();
 
-        // If authorized, redirect to the requested page
-        window.location.href = page;
+        // Get the results
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "";
+
+        // Display results or message
+        if (results.error) {
+            resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
+        } else if (results.length === 0) {
+            resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
+        } else {
+            const list = document.createElement("ul");
+            results.forEach((item) => {
+                const listItem = document.createElement("li");
+
+                if (item.type === "artist") {
+                    const link = document.createElement("a");
+                    link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
+                    link.textContent = item.result;
+                    listItem.appendChild(link);
+                } else if (item.type === "album") {
+                    const link = document.createElement("a");
+                    link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
+                    link.textContent = item.result;
+                    listItem.appendChild(link);
+                } else if (item.type === "song") {
+                    const link = document.createElement("a");
+                    link.href = `playSong.html?song_id=${encodeURIComponent(item.song_id)}`;
+                    link.textContent = item.result;
+                    listItem.appendChild(link);
+                }
+
+                list.appendChild(listItem);
+            });
+            resultsDiv.appendChild(list);
+        }
+                if (response.status === 401) {
+        // Redirect to login if unauthorized
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+        return;
+    }
     } catch (err) {
         console.error("Error:", err);
-        alert("An error occurred while verifying login.");
+        alert("An error occurred while performing the search.");
     }
 }
 
-    </script>
+    async function viewAll(page) {
+const token = localStorage.getItem("authToken"); // Get the token from localStorage
+
+try {
+    // Attempt to access a secured route to check if the token is valid
+    const response = await fetch("/search", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ type: "check", query: "" }),
+    });
+
+    if (response.status === 401) {
+        // Redirect to login if unauthorized
+        alert("You must be logged in to view this page.");
+        window.location.href = "login.html";
+        return;
+    }
+
+    // If authorized, redirect to the requested page
+    window.location.href = page;
+} catch (err) {
+    console.error("Error:", err);
+    alert("An error occurred while verifying login.");
+}
+}
+
+</script>
 </body>
 </html>

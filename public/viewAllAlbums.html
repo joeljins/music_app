@@ -38,116 +38,116 @@
     </style>
 </head>
 <body>
-    <h1 style="text-align: center;">All Albums</h1>
-    <div id="albums-container">
-    </div>
+<h1 style="text-align: center;">All Albums</h1>
+<div id="albums-container">
+</div>
 
-    <script>
-        async function fetchAlbums() {
-            try {
-                const response = await fetch("/all_albums");
-                const albums = await response.json();
+<script>
+    async function fetchAlbums() {
+        try {
+            const response = await fetch("/all_albums");
+            const albums = await response.json();
 
-                const container = document.getElementById("albums-container");
-                container.innerHTML = "";
+            const container = document.getElementById("albums-container");
+            container.innerHTML = "";
 
-                albums.forEach(album => {
-                    const albumItem = document.createElement("div");
+            albums.forEach(album => {
+                const albumItem = document.createElement("div");
 
-                    // Album title
-                    const albumTitle = document.createElement("div");
-                    albumTitle.className = "album-title";
-                    albumTitle.textContent = `${album.album_name} (Released: ${formatDate(album.release_date)})`;
+                // Album title
+                const albumTitle = document.createElement("div");
+                albumTitle.className = "album-title";
+                albumTitle.textContent = `${album.album_name} (Released: ${formatDate(album.release_date)})`;
 
-                    // Songs container
-                    const songsList = document.createElement("div");
-                    songsList.className = "songs-list";
+                // Songs container
+                const songsList = document.createElement("div");
+                songsList.className = "songs-list";
 
-                    // Dropdown toggle
-                    albumTitle.addEventListener("click", async () => {
-                        if (songsList.style.display === "none" || !songsList.style.display) {
-                            songsList.style.display = "block";
-                            // Fetch songs for this album
-                            if (!songsList.hasChildNodes()) {
-                                const songs = await fetchSongsForAlbum(album.album_id);
-                                if (songs.length === 0) {
-                                    songsList.innerHTML = "<p>No songs found for this album.</p>";
-                                } else {
-                                    songs.forEach(song => {
-                                        const songDiv = document.createElement("div");
-                                        songDiv.className = "song-info";
+                // Dropdown toggle
+                albumTitle.addEventListener("click", async () => {
+                    if (songsList.style.display === "none" || !songsList.style.display) {
+                        songsList.style.display = "block";
+                        // Fetch songs for this album
+                        if (!songsList.hasChildNodes()) {
+                            const songs = await fetchSongsForAlbum(album.album_id);
+                            if (songs.length === 0) {
+                                songsList.innerHTML = "<p>No songs found for this album.</p>";
+                            } else {
+                                songs.forEach(song => {
+                                    const songDiv = document.createElement("div");
+                                    songDiv.className = "song-info";
 
-                                        // Song title with link to play the song
-                                        const titleDiv = document.createElement("div");
-                                        const titleLink = document.createElement("a");
-                                        titleLink.href = `playSong.html?song_id=${song.song_id}`;
-                                        titleLink.textContent = song.song_name;
-                                        titleDiv.appendChild(titleLink);
+                                    // Song title with link to play the song
+                                    const titleDiv = document.createElement("div");
+                                    const titleLink = document.createElement("a");
+                                    titleLink.href = `playSong.html?song_id=${song.song_id}`;
+                                    titleLink.textContent = song.song_name;
+                                    titleDiv.appendChild(titleLink);
 
-                                        // Year
-                                        const yearDiv = document.createElement("div");
-                                        yearDiv.textContent = `Year: ${song.year || "N/A"}`;
+                                    // Year
+                                    const yearDiv = document.createElement("div");
+                                    yearDiv.textContent = `Year: ${song.year || "N/A"}`;
 
-                                        // Duration
-                                        const durationDiv = document.createElement("div");
-                                        durationDiv.textContent = `Duration: ${formatDuration(song.duration)}`;
+                                    // Duration
+                                    const durationDiv = document.createElement("div");
+                                    durationDiv.textContent = `Duration: ${formatDuration(song.duration)}`;
 
-                                        // Artist with link
-                                        const artistDiv = document.createElement("div");
-                                        const artistLink = document.createElement("a");
-                                        artistLink.href = `artistSongs.html?query=${encodeURIComponent(song.artist_name)}`;
-                                        artistLink.textContent = song.artist_name || "Unknown Artist";
-                                        artistDiv.appendChild(artistLink);
+                                    // Artist with link
+                                    const artistDiv = document.createElement("div");
+                                    const artistLink = document.createElement("a");
+                                    artistLink.href = `artistSongs.html?query=${encodeURIComponent(song.artist_name)}`;
+                                    artistLink.textContent = song.artist_name || "Unknown Artist";
+                                    artistDiv.appendChild(artistLink);
 
-                                        // Song container
-                                        songDiv.appendChild(titleDiv);
-                                        songDiv.appendChild(yearDiv);
-                                        songDiv.appendChild(durationDiv);
-                                        songDiv.appendChild(artistDiv);
+                                    // Song container
+                                    songDiv.appendChild(titleDiv);
+                                    songDiv.appendChild(yearDiv);
+                                    songDiv.appendChild(durationDiv);
+                                    songDiv.appendChild(artistDiv);
 
-                                        songsList.appendChild(songDiv);
-                                    });
-                                }
+                                    songsList.appendChild(songDiv);
+                                });
                             }
-                        } else {
-                            songsList.style.display = "none";
                         }
-                    });
-
-                    albumItem.appendChild(albumTitle);
-                    albumItem.appendChild(songsList);
-                    container.appendChild(albumItem);
+                    } else {
+                        songsList.style.display = "none";
+                    }
                 });
-            } catch (err) {
-                console.error("Error fetching albums:", err);
-            }
-        }
 
-        async function fetchSongsForAlbum(albumId) {
-            try {
-                const response = await fetch(`/songs_by_album?album_id=${encodeURIComponent(albumId)}`);
-                return await response.json();
-            } catch (err) {
-                console.error(`Error fetching songs for album ${albumId}:`, err);
-                return [];
-            }
+                albumItem.appendChild(albumTitle);
+                albumItem.appendChild(songsList);
+                container.appendChild(albumItem);
+            });
+        } catch (err) {
+            console.error("Error fetching albums:", err);
         }
+    }
 
-        function formatDate(rawDate) {
-            if (!rawDate) return "N/A"; // For missing dates
-            const date = new Date(rawDate);
-            return date.toISOString().split("T")[0]; // Extract only the YYYY-MM-DD part
+    async function fetchSongsForAlbum(albumId) {
+        try {
+            const response = await fetch(`/songs_by_album?album_id=${encodeURIComponent(albumId)}`);
+            return await response.json();
+        } catch (err) {
+            console.error(`Error fetching songs for album ${albumId}:`, err);
+            return [];
         }
+    }
 
-        function formatDuration(ms) {
-            if (!ms) return "N/A";
-            const minutes = Math.floor(ms / 60000);
-            const seconds = ((ms % 60000) / 1000).toFixed(0);
-            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-        }
+    function formatDate(rawDate) {
+        if (!rawDate) return "N/A"; // For missing dates
+        const date = new Date(rawDate);
+        return date.toISOString().split("T")[0]; // Extract only the YYYY-MM-DD part
+    }
 
-        // Fetch albums
-        fetchAlbums();
-    </script>
+    function formatDuration(ms) {
+        if (!ms) return "N/A";
+        const minutes = Math.floor(ms / 60000);
+        const seconds = ((ms % 60000) / 1000).toFixed(0);
+        return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+    }
+
+    // Fetch albums
+    fetchAlbums();
+</script>
 </body>
 </html>
