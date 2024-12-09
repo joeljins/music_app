@@ -38,6 +38,28 @@
       text-align: center;
     }
 
+      /* Styling for the login section */
+      #login-section {
+          margin-top: 20px;
+          text-align: center;
+      }
+
+      #login-section button {
+          width: auto;
+          background-color: #f0f0f0;
+          color: #333;
+          border: 1px solid #ccc;
+          margin-top: 10px;
+      }
+
+      #login-section button:hover {
+          background-color: #e0e0e0;
+      }
+
+      #login-section button:active {
+          background-color: #d0d0d0;
+      }
+
     label {
       display: block;
       font-size: 14px;
@@ -103,23 +125,32 @@
       <h2>Register</h2>
       <label for="username">Username:</label>
       <input id="username" type="text" name="username" placeholder="Enter your username" required>
-      
+
       <label for="password">Password:</label>
       <input id="password" type="password" name="password" placeholder="Enter your password" required>
-      
+
       <label for="preferredName">Preferred Name (Optional):</label>
       <input id="preferredName" type="text" name="preferredName" placeholder="Enter your preferred name">
-      
+
       <label for="email">Email:</label>
       <input id="email" type="email" name="email" placeholder="Enter your email" required maxlength="50">
-      
+
       <button type="submit" id="registerButton">Register</button>
     </form>
+    <div id="login-section">
+			<p>Have an account?</p>
+			<button type="button" onclick="redirectToLogin()">Login</button>
+      </div>
   </div>
 
   <script>
+      // Redirection to the registration page
+      function redirectToLogin() {
+			window.location.href = "login.html";
+		}
+
     document.getElementById("registerForm").addEventListener("submit", async function(event) {
-      event.preventDefault(); // Prevent the form from submitting normally
+      event.preventDefault();
 
       const username = document.getElementById("username").value;
       const password = document.getElementById("password").value;
@@ -139,7 +170,7 @@
 
         if (response.ok) {
           alert("Registration successful!");
-          // Redirect to login page or another page
+          // Redirect to login page
           window.location.href = "/login.html";
         } else {
           alert(result.error || "Registration failed!");

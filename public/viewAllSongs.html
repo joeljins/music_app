@@ -39,7 +39,6 @@
             </tr>
         </thead>
         <tbody id="song-list">
-            <!-- Song data will be dynamically added here -->
         </tbody>
     </table>
 
@@ -55,7 +54,7 @@
                 songs.forEach(song => {
                     const row = document.createElement("tr");
 
-                    // Song Title with Link to Play Page
+                    // Song with link to play
                     const titleCell = document.createElement("td");
                     const titleLink = document.createElement("a");
                     titleLink.href = `playSong.html?song_id=${song.song_id}`;
@@ -70,7 +69,7 @@
                     const durationCell = document.createElement("td");
                     durationCell.textContent = formatDuration(song.duration);
 
-                    // Artist(s) with Links
+                    // Artist with Link
                     const artistCell = document.createElement("td");
                     const artistLink = document.createElement("a");
                     artistLink.href = `artistSongs.html?query=${encodeURIComponent(song.artist_name)}`;
@@ -88,14 +87,14 @@
                         albumCell.textContent = "N/A";
                     }
 
-                    // Append all cells to the row
+                    // Append all songs
                     row.appendChild(titleCell);
                     row.appendChild(yearCell);
                     row.appendChild(durationCell);
                     row.appendChild(artistCell);
                     row.appendChild(albumCell);
 
-                    // Append the row to the table body
+                    // Append to main table
                     songList.appendChild(row);
                 });
             } catch (err) {
@@ -110,7 +109,7 @@
             return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
         }
 
-        // Fetch songs on page load
+        // Fetch songs
         fetchSongs();
     </script>
 </body>

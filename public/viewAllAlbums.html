@@ -40,7 +40,6 @@
 <body>
     <h1 style="text-align: center;">All Albums</h1>
     <div id="albums-container">
-        <!-- Albums will be dynamically added here -->
     </div>
 
     <script>
@@ -64,11 +63,11 @@
                     const songsList = document.createElement("div");
                     songsList.className = "songs-list";
 
-                    // Add event listener for dropdown toggle
+                    // Dropdown toggle
                     albumTitle.addEventListener("click", async () => {
                         if (songsList.style.display === "none" || !songsList.style.display) {
                             songsList.style.display = "block";
-                            // Fetch songs for this album if not already loaded
+                            // Fetch songs for this album
                             if (!songsList.hasChildNodes()) {
                                 const songs = await fetchSongsForAlbum(album.album_id);
                                 if (songs.length === 0) {
@@ -93,14 +92,14 @@
                                         const durationDiv = document.createElement("div");
                                         durationDiv.textContent = `Duration: ${formatDuration(song.duration)}`;
 
-                                        // Artist(s) with links
+                                        // Artist with link
                                         const artistDiv = document.createElement("div");
                                         const artistLink = document.createElement("a");
                                         artistLink.href = `artistSongs.html?query=${encodeURIComponent(song.artist_name)}`;
                                         artistLink.textContent = song.artist_name || "Unknown Artist";
                                         artistDiv.appendChild(artistLink);
 
-                                        // Append all elements to the song container
+                                        // Song container
                                         songDiv.appendChild(titleDiv);
                                         songDiv.appendChild(yearDiv);
                                         songDiv.appendChild(durationDiv);
@@ -135,7 +134,7 @@
         }
 
         function formatDate(rawDate) {
-            if (!rawDate) return "N/A"; // Handle missing dates
+            if (!rawDate) return "N/A"; // For missing dates
             const date = new Date(rawDate);
             return date.toISOString().split("T")[0]; // Extract only the YYYY-MM-DD part
         }
@@ -147,7 +146,7 @@
             return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
         }
 
-        // Fetch albums on page load
+        // Fetch albums
         fetchAlbums();
     </script>
 </body>

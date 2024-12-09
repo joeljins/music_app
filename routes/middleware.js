@@ -7,7 +7,7 @@ const getUserIdFromToken = (req, res, next) => {
 
   if (!token) {
       console.log("Token is missing in cookies");
-      return res.status(401).json({ error: "Unauthorized: No token provided" });
+      return res.status(401).json({ error: "You are not logged in" });
   }
 
   try {
