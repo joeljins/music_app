@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const pool = require("./db"); // Import the pool from db.js
 const router = require("./routes/router");
 const userRouter = require("./routes/user");
+const playlistRouter = require("./routes/playlist");
 
 const app = express();
 
@@ -30,6 +31,7 @@ async function startServer() {
   // Register routes
   app.use("/", router);
   app.use("/user", userRouter);
+  app.use("/playlist", playlistRouter);
 
   const PORT = 3000;
   app.listen(PORT, () => {

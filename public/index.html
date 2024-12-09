@@ -49,9 +49,9 @@
                         </tr>
                         <tr>
                             <td style="font-size: large; text-align:center;">
-                                <button onclick="window.location.href='viewAllSongs.html'">View All Songs</button>
-                                <button onclick="window.location.href='viewAllArtists.html'">View All Artists</button>
-                                <button onclick="window.location.href='viewAllAlbums.html'">View All Albums</button>
+                            <button onclick="viewAll('viewAllSongs.html')">View All Songs</button>
+                            <button onclick="viewAll('viewAllArtists.html')">View All Artists</button>
+                            <button onclick="viewAll('viewAllAlbums.html')">View All Albums</button>
                             </td>
                         </tr>
                     </table>
@@ -63,31 +63,32 @@
                                 Playlists
                             </th>
                         </tr>
-                        <tr>
+                        <tr >
                             <td>
                                 Create new playlist:
                                 <button id="newplaylist">+</button>
                             </td>
+                            <td>
+                                <table id="add_playlist">
+                                </table>
+                            </td> 
+                        </tr>
+                        <tr>
+                            <td id ="song">
+                                Add song:
+                                <button id="add_song">+</button>
+                            </td>
+                        </tr>
+                        <tr>
                         </tr>
                         <tr>
                             <td style="font-size: large;">
                                 Your Playlists:
-                                <ul>
-                                    <li>Playlist 1</li>
-                                    <li>Playlist 2</li>
-                                    <li>Playlist 3</li>
-                                </ul>
+                                <button id="display_playlists">+</button>
+                                <table id="your_playlists"></table>
                             </td>
                         </tr>
                         <tr>
-                            <td style="font-size: large;">
-                                Public Playlists:
-                                <ul>
-                                    <li>Public Playlist 1</li>
-                                    <li>Public Playlist 2</li>
-                                    <li>Public Playlist 3</li>
-                                </ul>
-                            </td>
                         </tr>
                     </table>
                 </td>
@@ -127,21 +128,25 @@
                     </table>
                 </td>
             </tr>
-        </table>
-    </div>
-    <script>
-    async function performSearch() {
-        const type = document.getElementById("searchtype").value;
-        const query = document.getElementById("searchinput").value;
-        const token = localStorage.getItem("authToken"); // Get the token from localStorage
-
-        // Removed the check for empty query so that empty = show all results
-        // if (!query) {
-        //     alert("Please enter a search term.");
-        //     return;
-        // }
+		</table>
+	</div>	
+	<div id="play">
+		<table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
+			<tr>
+				<th>Now Playing:</th>
+			</tr>
+		</table>
+	</div>
+    <script src="playlist_script.js"></script>
+	<script>
+		async function performSearch() {
+			// Get the search type and input value
+			const type = document.getElementById("searchtype").value;
+			const query = document.getElementById("searchinput").value;
+            const token = localStorage.getItem("authToken"); // Get the token from localStorage
 
         try {
+            // Send a POST request
             const response = await fetch("/search", {
                 method: "POST",
                 headers: {
@@ -153,9 +158,11 @@
 
             const results = await response.json();
 
+            // Get the results
             const resultsDiv = document.getElementById("results");
             resultsDiv.innerHTML = ""; 
 
+            // Display results or message
             if (results.error) {
                 resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
             } else if (results.length === 0) {
@@ -186,17 +193,47 @@
                 });
                 resultsDiv.appendChild(list);
             }
+                    if (response.status === 401) {
+            // Redirect to login if unauthorized
+            alert("You must be logged in to view this page.");
+            window.location.href = "login.html";
+            return;
+        }
         } catch (err) {
             console.error("Error:", err);
             alert("An error occurred while performing the search.");
         }
     }
 
-    function viewAll(type) {
-        document.getElementById("searchtype").value = type;
-        document.getElementById("searchinput").value = "";
-        performSearch();
+        async function viewAll(page) {
+    const token = localStorage.getItem("authToken"); // Get the token from localStorage
+
+    try {
+        // Attempt to access a secured route to check if the token is valid
+        const response = await fetch("/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ type: "check", query: "" }),
+        });
+
+        if (response.status === 401) {
+            // Redirect to login if unauthorized
+            alert("You must be logged in to view this page.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // If authorized, redirect to the requested page
+        window.location.href = page;
+    } catch (err) {
+        console.error("Error:", err);
+        alert("An error occurred while verifying login.");
     }
+}
+
     </script>
 </body>
 </html>
