@@ -85,6 +85,28 @@
 			background-color: #2c669d;
 		}
 
+		/* Styling for the register section */
+		#register-section {
+			margin-top: 20px;
+			text-align: center;
+		}
+
+		#register-section button {
+			width: auto;
+			background-color: #f0f0f0;
+			color: #333;
+			border: 1px solid #ccc;
+			margin-top: 10px;
+		}
+
+		#register-section button:hover {
+			background-color: #e0e0e0;
+		}
+
+		#register-section button:active {
+			background-color: #d0d0d0;
+		}
+
 		/* Responsive design for smaller screens */
 		@media (max-width: 480px) {
 			#container {
@@ -107,13 +129,29 @@
 			<h1>Log In</h1>
 			<label for="username">Username</label>
 			<input id="username" type="text" placeholder="Enter your username" required>
-			
+
 			<label for="password">Password</label>
 			<input id="password" type="password" placeholder="Enter your password" required>
-			
+
 			<button type="submit">Submit</button>
 		</form>
+
+		<div id="register-section">
+			<p>Don't have an account?</p>
+			<button type="button" onclick="redirectToRegister()">Register</button>
+		</div>
 	</div>
 	<script src="script.js"></script>
+	<script>
+		// Redirection to the registration page
+		function redirectToRegister() {
+			window.location.href = "register.html";
+		}
+
+		document.getElementById("loginForm").addEventListener("submit", function(event) {
+			event.preventDefault();
+			alert("Login form submitted!");
+		});
+	</script>
 </body>
 </html>

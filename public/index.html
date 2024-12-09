@@ -1,16 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Home</title>
-	<link rel="stylesheet" href="style.css">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        a {
+            color: blue;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-	<div id="container">
-		<table id="outer" style="margin-left:auto;margin-right:auto;">
-			<tr>
-				<td>
+    <div id="container">
+        <table id="outer" style="margin-left:auto;margin-right:auto;">
+            <tr>
+                <td>
                     <table id="search" style="border: 3px solid green; margin-left: auto;margin-right: auto;">
                         <tr>
                             <th style="font-size: xx-large; text-decoration-line: underline;">
@@ -37,8 +44,14 @@
                             <td style="font-size: large;">
                                 Results:
                                 <div id="results" style="border: 1px solid green; margin-top: 10px; padding: 10px;">
-                                    <!-- Results will be displayed here -->
                                 </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-size: large; text-align:center;">
+        <button onclick="viewAll('viewAllSongs.html')">View All Songs</button>
+        <button onclick="viewAll('viewAllArtists.html')">View All Artists</button>
+        <button onclick="viewAll('viewAllAlbums.html')">View All Albums</button>
                             </td>
                         </tr>
                     </table>
@@ -118,6 +131,7 @@
                     </table>
                 </td>
             </tr>
+<<<<<<< HEAD
 		</table>
 	</div>	
 	<div id="play">
@@ -134,48 +148,109 @@
 			const type = document.getElementById("searchtype").value;
 			const query = document.getElementById("searchinput").value;
             const token = localStorage.getItem("authToken"); // Get the token from localStorage
+=======
+        </table>
+    </div>
+    <div id="play">
+        <table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
+            <tr>
+                <th>Now Playing:</th>
+            </tr>
+        </table>
+    </div>
+    <script>
+    async function performSearch() {
+        const type = document.getElementById("searchtype").value;
+        const query = document.getElementById("searchinput").value;
+        const token = localStorage.getItem("authToken"); // Get the token from localStorage
+>>>>>>> e5af95017a686db24ec8bdce7f3441e92e96c1a0
 
-			if (!query) {
-				alert("Please enter a search term.");
-				return;
-			}
+        try {
+            // Send a POST request
+            const response = await fetch("/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
+                body: JSON.stringify({ type, query }),
+            });
 
-			try {
-				// Send a POST request to the backend
-				const response = await fetch("/search", {
-					method: "POST",
-					headers: { 
-                        "Content-Type": "application/json" ,
-                        "Authorization": `Bearer ${token}`,
-                    },
-					body: JSON.stringify({ type, query }),
-				});
+            const results = await response.json();
 
-				const results = await response.json();
+            // Get the results
+            const resultsDiv = document.getElementById("results");
+            resultsDiv.innerHTML = ""; // Clear previous results
 
-				// Get the results container
-				const resultsDiv = document.getElementById("results");
-				resultsDiv.innerHTML = ""; // Clear previous results
+            // Display results or message
+            if (results.error) {
+                resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
+            } else if (results.length === 0) {
+                resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
+            } else {
+                const list = document.createElement("ul");
+                results.forEach((item) => {
+                    const listItem = document.createElement("li");
 
-				// Display results or an appropriate message
-				if (results.error) {
-					resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
-				} else if (results.length === 0) {
-					resultsDiv.innerHTML = `<p>No results found for "${query}".</p>`;
-				} else {
-					const list = document.createElement("ul");
-					results.forEach((item) => {
-						const listItem = document.createElement("li");
-						listItem.textContent = item.result;
-						list.appendChild(listItem);
-					});
-					resultsDiv.appendChild(list);
-				}
-			} catch (err) {
-				console.error("Error:", err);
-				alert("An error occurred while performing the search.");
-			}
-		}
-	</script>
+                    if (item.type === "artist") {
+                        const link = document.createElement("a");
+                        link.href = `artistSongs.html?type=artist_songs&query=${encodeURIComponent(item.result)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
+                    } else if (item.type === "album") {
+                        const link = document.createElement("a");
+                        link.href = `albumSongs.html?type=album_songs&query=${encodeURIComponent(item.result)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
+                    } else if (item.type === "song") {
+                        listItem.textContent = item.result;
+                    }
+
+                    list.appendChild(listItem);
+                });
+                resultsDiv.appendChild(list);
+            }
+                    if (response.status === 401) {
+            // Redirect to login if unauthorized
+            alert("You must be logged in to view this page.");
+            window.location.href = "login.html";
+            return;
+        }
+        } catch (err) {
+            console.error("Error:", err);
+            alert("An error occurred while performing the search.");
+        }
+    }
+
+        async function viewAll(page) {
+    const token = localStorage.getItem("authToken"); // Get the token from localStorage
+
+    try {
+        // Attempt to access a secured route to check if the token is valid
+        const response = await fetch("/search", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify({ type: "check", query: "" }),
+        });
+
+        if (response.status === 401) {
+            // Redirect to login if unauthorized
+            alert("You must be logged in to view this page.");
+            window.location.href = "login.html";
+            return;
+        }
+
+        // If authorized, redirect to the requested page
+        window.location.href = page;
+    } catch (err) {
+        console.error("Error:", err);
+        alert("An error occurred while verifying login.");
+    }
+}
+
+    </script>
 </body>
 </html>

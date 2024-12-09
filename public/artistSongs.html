@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Artist Songs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            border-bottom: 2px solid #333;
+            padding-bottom: 5px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        .album-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        .album-title:hover {
+            background-color: #e0e0e0;
+        }
+
+        .songs-list {
+            margin-left: 20px;
+            border-left: 2px solid #ccc;
+            padding-left: 10px;
+            display: none; /* Initially hidden */
+        }
+
+        .song-info {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr; /* Adjust column widths as needed */
+            gap: 10px; /* Optional spacing between columns */
+            border: 1px solid #ccc;
+            padding: 8px;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1 id="artist-name">Songs by Artist</h1>
+        <div id="album-results">
+        </div>
+    </div>
+
+    <script>
+        // Function to parse query parameters from the URL
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.slice(1);
+            const pairs = queryString.split("&");
+            for (const pair of pairs) {
+                const [key, value] = pair.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+            }
+            return params;
+        }
+
+        async function fetchArtistSongs(artistName) {
+            const token = localStorage.getItem("authToken");
+            try {
+                const response = await fetch(`/artist_songs?query=${encodeURIComponent(artistName)}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch songs for the artist.");
+                }
+
+                const songs = await response.json();
+                return songs;
+            } catch (err) {
+                console.error("Error fetching artist songs:", err);
+                alert("An error occurred while fetching artist songs.");
+                return [];
+            }
+        }
+
+        function formatDuration(ms) {
+            if (!ms) return 'N/A';
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function groupSongsByAlbum(songs) {
+            const albums = {};
+            songs.forEach(song => {
+                const albumName = song.album_name || 'Unknown Album';
+                if (!albums[albumName]) {
+                    albums[albumName] = [];
+                }
+                albums[albumName].push(song);
+            });
+            return albums;
+        }
+
+        function displayAlbums(artistName, songs) {
+            const artistNameElement = document.getElementById("artist-name");
+            artistNameElement.textContent = `Albums by ${artistName}`;
+
+            const albumResults = document.getElementById("album-results");
+            albumResults.innerHTML = "";
+
+            if (songs.length === 0) {
+                albumResults.innerHTML = `<p>No songs found for "${artistName}".</p>`;
+                return;
+            }
+
+            const albums = groupSongsByAlbum(songs);
+
+            const albumList = document.createElement("ul");
+
+            for (const albumName in albums) {
+                const albumItem = document.createElement("li");
+
+                // Create the album title element
+                const albumTitle = document.createElement("div");
+                albumTitle.className = "album-title";
+                albumTitle.textContent = albumName;
+
+                // When the album title is clicked, toggle the display of songs
+                albumTitle.addEventListener("click", () => {
+                    songsList.style.display = (songsList.style.display === "none" || !songsList.style.display) ? "block" : "none";
+                });
+
+                albumItem.appendChild(albumTitle);
+
+                // Create the songs container for this album
+                const songsList = document.createElement("div");
+                songsList.className = "songs-list";
+
+                // Add each song to the songs list
+                albums[albumName].forEach(song => {
+                    const songDiv = document.createElement("div");
+                    songDiv.className = "song-info";
+
+                    const songNameDiv = document.createElement("div");
+
+                    const link = document.createElement("a");
+                    // Assuming you have a page called playSong.html that plays a given song.
+                    link.href = `playSong.html?song_id=${encodeURIComponent(song.song_id)}`;
+                    link.textContent = `Title: ${song.song_name}`;
+
+                    songNameDiv.appendChild(link);
+
+
+                    const yearDiv = document.createElement("div");
+                    yearDiv.textContent = `Year: ${song.year || 'N/A'}`;
+
+                    const durationDiv = document.createElement("div");
+                    durationDiv.textContent = `Duration: ${formatDuration(song.duration)}`;
+
+                    songDiv.appendChild(songNameDiv);
+                    songDiv.appendChild(yearDiv);
+                    songDiv.appendChild(durationDiv);
+
+                    songsList.appendChild(songDiv);
+                });
+
+                albumItem.appendChild(songsList);
+                albumList.appendChild(albumItem);
+            }
+
+            albumResults.appendChild(albumList);
+        }
+
+        // On page load:
+        (async function() {
+            const params = getQueryParams();
+            const artistName = params.query || "";
+            if (!artistName) {
+                alert("No artist specified.");
+                return;
+            }
+
+            const songs = await fetchArtistSongs(artistName);
+            displayAlbums(artistName, songs);
+        })();
+    </script>
+</body>
+</html>
