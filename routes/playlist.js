@@ -60,7 +60,8 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
     if (!userId) {
         return res.status(400).json({ error: "User not logged in." });
     }
-    let sql = `
+
+    const sql = `
         SELECT p.playlist_id, p.name AS playlist_name, s.name AS song_name, s.song_id
         FROM PLAYLISTS p
         LEFT JOIN CONTAINS c ON p.playlist_id = c.playlist_id
@@ -122,8 +123,8 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
             <h1>Your Playlists</h1>
             <ul>
         `;
-        const playlists = {};
 
+        const playlists = {};
         results.rows.forEach((row) => {
             if (!playlists[row.playlist_id]) {
                 playlists[row.playlist_id] = {
@@ -142,10 +143,11 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
         for (let playlistId in playlists) {
             html += `<li><strong>${playlists[playlistId].name}</strong><ul>`;
             playlists[playlistId].songs.forEach((song) => {
-                html += `<li><a href="playSong.html?song_id=${song.song_id}">${song.name}</a></li>`;
+                html += `<li><a href="/playSong.html?song_id=${encodeURIComponent(song.song_id)}">${song.name}</a></li>`;
             });
             html += '</ul></li>';
         }
+
         html += '</ul></body></html>';
 
         res.send(html);
@@ -154,7 +156,6 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
         res.status(500).json({ error: "Database error." });
     }
 });
-
 
 playlistRouter.post("/add", getUserIdFromToken, async (req, res) => {
     const userId = res.locals.user_id;
@@ -179,7 +180,7 @@ playlistRouter.post("/add", getUserIdFromToken, async (req, res) => {
         }
         let playlist_id = playlistResult.rows[0].playlist_id;
 
-        // Loop through the songs and check if they exist in the song table
+        // Loop through the songs
         for (let song of songs) {
             const songResult = await pool.query(checkSongSql, [song]);
 
@@ -198,8 +199,6 @@ playlistRouter.post("/add", getUserIdFromToken, async (req, res) => {
         res.status(500).json({ error: "Database error." });
     }
 });
-
-
 
 // Delete playlist from database
 playlistRouter.post("/delete", getUserIdFromToken, async (req, res) => {
