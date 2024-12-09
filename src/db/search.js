@@ -33,7 +33,7 @@ async function searchArtists(userEntry) {
     }
   }
   
-  // Function to search for songs
+  // Search for songs
   async function searchSongs(userEntry) {
     try {
       const query = `
@@ -57,7 +57,7 @@ async function searchArtists(userEntry) {
     }
   }
   
-  // Function to search for albums
+  // Search for albums
   async function searchAlbums(userEntry) {
     try {
       const query = `
@@ -81,7 +81,7 @@ async function searchArtists(userEntry) {
     }
   }
   
-  // Main function to handle user choice
+  // Handle user choice
   async function main() {
     const args = process.argv.slice(2);
     const [type, userInput] = args;
@@ -102,7 +102,7 @@ async function searchArtists(userEntry) {
       console.error('Invalid type. Use "artist", "song", or "album".');
     }
   
-    await pool.end(); // Close the database connection
+    await pool.end(); // Close db connection
   }
   
   main();

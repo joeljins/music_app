@@ -13,7 +13,7 @@ const defaultConfig = {
   port: PG_PORT,
   user: PG_USER,
   password: PG_PASSWORD,
-  database: "postgres", // Always connect to the default postgres database for checks
+  database: "postgres",
 };
 
 const targetConfig = {
@@ -24,7 +24,7 @@ const targetConfig = {
   database: PG_DATABASE,
 };
 
-const sqlFilePath = "./src/db/ddl.sql"; // Path to your SQL schema and seed data
+const sqlFilePath = "./src/db/ddl.sql"; // Path to schema
 
 async function setupDatabase() {
   const client = new Client(defaultConfig);
@@ -49,7 +49,7 @@ async function setupDatabase() {
 
     await client.end();
 
-    // Connect to the target database to set up tables and insert data
+    // Connect to the database to set up tables and insert data
     const targetClient = new Client(targetConfig);
     await targetClient.connect();
 
