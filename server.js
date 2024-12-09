@@ -12,18 +12,6 @@ app.use(express.json());
 app.use(express.static("public"));
 app.use(cookieParser());
 
-<<<<<<< HEAD
-// Configure the PostgreSQL pool
-const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "music",
-  password: "5436",
-  port: 5432,
-});
-
-=======
->>>>>>> e5af95017a686db24ec8bdce7f3441e92e96c1a0
 // Function to initialize the database connection
 async function initializeDatabaseConnection() {
   try {

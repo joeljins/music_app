@@ -68,30 +68,27 @@
                                 Create new playlist:
                                 <button id="newplaylist">+</button>
                             </td>
+                            <td>
+                                <table id="add_playlist">
+                                </table>
+                            </td> 
                         </tr>
-                        <td>
-                            <table id="add_playlist">
-
-                            </table>
-                        </td>
+                        <tr>
+                            <td id ="song">
+                                Add song:
+                                <button id="add_song">+</button>
+                            </td>
+                        </tr>
+                        <tr>
+                        </tr>
                         <tr>
                             <td style="font-size: large;">
                                 Your Playlists:
-                            </td>
-                        </tr>
-                            <td>
-                                <button id="display_playlists">Show Playlists</button>
+                                <button id="display_playlists">+</button>
                                 <table id="your_playlists"></table>
                             </td>
+                        </tr>
                         <tr>
-                            <td style="font-size: large;">
-                                Public Playlists:
-                                <ul>
-                                    <li>Public Playlist 1</li>
-                                    <li>Public Playlist 2</li>
-                                    <li>Public Playlist 3</li>
-                                </ul>
-                            </td>
                         </tr>
                     </table>
                 </td>
@@ -131,7 +128,6 @@
                     </table>
                 </td>
             </tr>
-<<<<<<< HEAD
 		</table>
 	</div>	
 	<div id="play">
@@ -148,22 +144,6 @@
 			const type = document.getElementById("searchtype").value;
 			const query = document.getElementById("searchinput").value;
             const token = localStorage.getItem("authToken"); // Get the token from localStorage
-=======
-        </table>
-    </div>
-    <div id="play">
-        <table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
-            <tr>
-                <th>Now Playing:</th>
-            </tr>
-        </table>
-    </div>
-    <script>
-    async function performSearch() {
-        const type = document.getElementById("searchtype").value;
-        const query = document.getElementById("searchinput").value;
-        const token = localStorage.getItem("authToken"); // Get the token from localStorage
->>>>>>> e5af95017a686db24ec8bdce7f3441e92e96c1a0
 
         try {
             // Send a POST request
