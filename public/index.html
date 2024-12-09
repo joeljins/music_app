@@ -44,13 +44,11 @@
                             <td style="font-size: large;">
                                 Results:
                                 <div id="results" style="border: 1px solid green; margin-top: 10px; padding: 10px;">
-                                    <!-- Results will be displayed here -->
                                 </div>
                             </td>
                         </tr>
                         <tr>
                             <td style="font-size: large; text-align:center;">
-                                <!-- New Buttons for viewing all entries -->
                                 <button onclick="window.location.href='viewAllSongs.html'">View All Songs</button>
                                 <button onclick="window.location.href='viewAllArtists.html'">View All Artists</button>
                                 <button onclick="window.location.href='viewAllAlbums.html'">View All Albums</button>
@@ -131,13 +129,6 @@
             </tr>
         </table>
     </div>
-    <div id="play">
-        <table id="nowplaying" style="border: 3px solid green; background-color: green; position: absolute;bottom: 0px;height:100px;width:100%">
-            <tr>
-                <th>Now Playing:</th>
-            </tr>
-        </table>
-    </div>
     <script>
     async function performSearch() {
         const type = document.getElementById("searchtype").value;
@@ -151,7 +142,6 @@
         // }
 
         try {
-            // Send a POST request to the backend
             const response = await fetch("/search", {
                 method: "POST",
                 headers: {
@@ -163,11 +153,9 @@
 
             const results = await response.json();
 
-            // Get the results container
             const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = ""; // Clear previous results
+            resultsDiv.innerHTML = ""; 
 
-            // Display results or an appropriate message
             if (results.error) {
                 resultsDiv.innerHTML = `<p style="color: red;">Error: ${results.error}</p>`;
             } else if (results.length === 0) {
@@ -188,7 +176,10 @@
                         link.textContent = item.result;
                         listItem.appendChild(link);
                     } else if (item.type === "song") {
-                        listItem.textContent = item.result;
+                        const link = document.createElement("a");
+                        link.href = `playSong.html?song_id=${encodeURIComponent(item.song_id)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
                     }
 
                     list.appendChild(listItem);
