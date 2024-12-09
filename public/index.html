@@ -50,22 +50,26 @@
                                 Playlists
                             </th>
                         </tr>
-                        <tr>
+                        <tr >
                             <td>
                                 Create new playlist:
                                 <button id="newplaylist">+</button>
                             </td>
                         </tr>
+                        <td>
+                            <table id="add_playlist">
+
+                            </table>
+                        </td>
                         <tr>
                             <td style="font-size: large;">
                                 Your Playlists:
-                                <ul>
-                                    <li>Playlist 1</li>
-                                    <li>Playlist 2</li>
-                                    <li>Playlist 3</li>
-                                </ul>
                             </td>
                         </tr>
+                            <td>
+                                <button id="display_playlists">Show Playlists</button>
+                                <table id="your_playlists"></table>
+                            </td>
                         <tr>
                             <td style="font-size: large;">
                                 Public Playlists:
@@ -123,6 +127,7 @@
 			</tr>
 		</table>
 	</div>
+    <script src="playlist_script.js"></script>
 	<script>
 		async function performSearch() {
 			// Get the search type and input value

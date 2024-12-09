@@ -4,6 +4,7 @@ const { Pool } = require("pg");
 const cookieParser = require("cookie-parser");
 const router = require("./routes/router");
 const userRouter = require("./routes/user");
+const playlistRouter = require("./routes/playlist");
 
 const app = express();
 
@@ -16,7 +17,7 @@ const pool = new Pool({
   user: "postgres",
   host: "localhost",
   database: "music",
-  password: "11032002",
+  password: "5436",
   port: 5432,
 });
 
@@ -40,6 +41,7 @@ async function startServer() {
   // Register routes
   app.use("/", router);
   app.use("/user", userRouter);
+  app.use("/playlist", playlistRouter);
 
   const PORT = 3000;
   app.listen(PORT, () => {
