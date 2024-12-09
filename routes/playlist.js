@@ -8,7 +8,6 @@ const getUserIdFromToken = require("./middleware.js");
 playlistRouter.post("/insert", getUserIdFromToken, async (req, res) => {
   const userId = res.locals.user_id;
   const { query_1, query_2 } = req.body;
-  console.log(userId, req.body.query_1, req.body.query_2)
 
   if (!query_1 || !query_2) {
     return res.status(400).json({ error: "All queries are required." });
@@ -27,10 +26,9 @@ playlistRouter.post("/insert", getUserIdFromToken, async (req, res) => {
     }
 
     // 'INSERT' SQL query to insert playlist
-    const newPlaylistId = `${userId}_${playlistCount}`;
-    sql = `INSERT INTO PLAYLISTS (playlist_id, name, description, username, visibility)
-           VALUES ($1, $2, $3, $4, $5)`;
-    await pool.query(sql, [newPlaylistId, query_1, query_2, userId, true]);
+    sql = `INSERT INTO PLAYLISTS (name, description, username, visibility)
+           VALUES ($1, $2, $3, $4)`;
+    await pool.query(sql, [query_1, query_2, userId, true]);
 
     res.status(201).json({ message: "Playlist created successfully." });
   } catch (err) {
@@ -63,7 +61,7 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
         return res.status(400).json({ error: "User not logged in." });
     }
     let sql = `
-        SELECT p.playlist_id, p.name AS playlist_name, s.name AS song_name
+        SELECT p.playlist_id, p.name AS playlist_name, s.name AS song_name, s.song_id
         FROM PLAYLISTS p
         LEFT JOIN CONTAINS c ON p.playlist_id = c.playlist_id
         LEFT JOIN SONGS s ON c.song_id = s.song_id
@@ -134,14 +132,17 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
                 };
             }
             if (row.song_name) {
-                playlists[row.playlist_id].songs.push(row.song_name);
+                playlists[row.playlist_id].songs.push({
+                    name: row.song_name,
+                    song_id: row.song_id
+                });
             }
         });
 
         for (let playlistId in playlists) {
             html += `<li><strong>${playlists[playlistId].name}</strong><ul>`;
             playlists[playlistId].songs.forEach((song) => {
-                html += `<li>${song}</li>`;
+                html += `<li><a href="playSong.html?song_id=${song.song_id}">${song.name}</a></li>`;
             });
             html += '</ul></li>';
         }
@@ -153,8 +154,6 @@ playlistRouter.get("/songs", getUserIdFromToken, async (req, res) => {
         res.status(500).json({ error: "Database error." });
     }
 });
-
-
 
 
 playlistRouter.post("/add", getUserIdFromToken, async (req, res) => {

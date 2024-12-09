@@ -8,7 +8,7 @@ CREATE TABLE USERS (
 
 -- Create the PLAYLISTS table
 CREATE TABLE PLAYLISTS (
-    playlist_id VARCHAR(30) PRIMARY KEY,
+    playlist_id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description VARCHAR(255),
     username VARCHAR(30) REFERENCES USERS(username),
@@ -63,7 +63,7 @@ CREATE TABLE STREAMS (
 );
 
 CREATE TABLE CONTAINS (
-    playlist_id VARCHAR(30) REFERENCES PLAYLISTS(playlist_id) ON DELETE CASCADE,
+    playlist_id INT REFERENCES PLAYLISTS(playlist_id) ON DELETE CASCADE,
     song_id VARCHAR(30) REFERENCES SONGS(song_id) ON DELETE CASCADE,
     date_added TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (playlist_id, song_id, date_added)
