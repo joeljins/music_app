@@ -5,6 +5,18 @@ const pool = require("../db"); // Import the pool
 
 const userRouter = express.Router();
 
+<<<<<<< HEAD
+// Configure the PostgreSQL pool
+const pool = new Pool({
+  user: 'postgres',
+  host: 'localhost',
+  database: 'music',
+  password: '5436',
+  port: 5432,
+});
+
+=======
+>>>>>>> e5af95017a686db24ec8bdce7f3441e92e96c1a0
 // Middleware to parse JSON
 userRouter.use(express.json());
 
