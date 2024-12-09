@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Song View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f8f8;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+        }
+        .song-info {
+            margin-bottom: 20px;
+        }
+        .song-info div {
+            margin-bottom: 10px;
+        }
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+        .progress-bar-fill {
+            height: 20px;
+            background-color: #76c7c0;
+            width: 0%;
+            transition: width 0.25s;
+        }
+        .rating-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        #rating-dropdown {
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        #submit-rating {
+            padding: 5px 10px;
+            border: none;
+            background-color: #76c7c0;
+            color: white;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #submit-rating:hover {
+            background-color: #68b0a8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 id="song-title">Loading...</h1>
+        <div class="song-info">
+            <div><strong>Artist:</strong> <span id="artist-name">Loading...</span></div>
+            <div><strong>Album:</strong> <span id="album-name">Loading...</span></div>
+            <div><strong>Release Year:</strong> <span id="release-year">Loading...</span></div>
+            <div><strong>Duration:</strong> <span id="duration">Loading...</span></div>
+            <div><strong>Average Rating:</strong> <span id="average-rating">Loading...</span></div>
+            <div><strong>Number of Streams:</strong> <span id="stream-count">Loading...</span></div>
+        </div>
+        
+
+        <div class="progress-bar">
+            <div class="progress-bar-fill" id="progress-fill"></div>
+        </div>
+
+        <div class="rating-container">
+            <label for="rating-dropdown"><strong>Rate this song:</strong></label>
+            <select id="rating-dropdown">
+                <option value="" disabled selected>Select a rating</option>
+                <option value="1">1 - Poor</option>
+                <option value="2">2 - Fair</option>
+                <option value="3">3 - Good</option>
+                <option value="4">4 - Very Good</option>
+                <option value="5">5 - Excellent</option>
+            </select>
+            <button id="submit-rating">Submit Rating</button>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const songId = urlParams.get("song_id");
+
+        async function fetchSongDetails(songId) {
+            try {
+                const response = await fetch(`/song/${songId}`);
+                const song = await response.json();
+
+                document.getElementById("song-title").textContent = song.song_name || "Unknown Song";
+                document.getElementById("artist-name").textContent = song.artist_name || "N/A";
+                document.getElementById("album-name").textContent = song.album_name || "N/A";
+                document.getElementById("release-year").textContent = song.release_year || "N/A";
+                document.getElementById("duration").textContent = formatDuration(song.duration) || "N/A";
+                document.getElementById("average-rating").textContent = song.average_rating || "No ratings available";
+                document.getElementById("stream-count").textContent = song.stream_count || "0";
+
+                startProgressBar(song.duration);
+            } catch (err) {
+                console.error("Error fetching song details:", err);
+            }
+        }
+
+        function formatDuration(ms) {
+            if (!ms) return "N/A";
+            const minutes = Math.floor(ms / 60000);
+            const seconds = ((ms % 60000) / 1000).toFixed(0);
+            return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+        }
+
+        function startProgressBar(duration) {
+            const progressBarFill = document.getElementById("progress-fill");
+            let currentProgress = 0;
+            const interval = setInterval(() => {
+                currentProgress += 100 / (duration / 1000);
+                if (currentProgress >= 100) {
+                    clearInterval(interval);
+                    progressBarFill.style.width = "100%";
+                } else {
+                    progressBarFill.style.width = `${currentProgress}%`;
+                }
+            }, 1000);
+        }
+
+        function setupRatingDropdown(songId) {
+            const dropdown = document.getElementById("rating-dropdown");
+            const submitButton = document.getElementById("submit-rating");
+
+            submitButton.addEventListener("click", async () => {
+                const rating = dropdown.value;
+
+                if (!rating) {
+                    alert("Please select a rating before submitting.");
+                    return;
+                }
+
+                try {
+                    const response = await fetch("/rate", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ song_id: songId, rating }),
+                    });
+
+                    if (response.ok) {
+                        alert("Thanks for rating :)");
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Error: ${errorData.error}`);
+                    }
+                } catch (err) {
+                    console.error("Error submitting rating:", err);
+                    alert("An error occurred. Please try again later.");
+                }
+            });
+        }
+
+        async function logStream(songId) {
+            try {
+                const response = await fetch(`/stream/${songId}`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${localStorage.getItem("authToken")}`, 
+                    },
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Error logging stream:", errorData.error);
+                } else {
+                    console.log("Stream logged successfully.");
+                }
+            } catch (err) {
+                console.error("Error logging stream:", err);
+            }
+        }
+
+        if (songId) {
+            fetchSongDetails(songId);
+            logStream(songId);
+            setupRatingDropdown(songId);
+        } else {
+            alert("No song ID provided!");
+        }
+    </script>
+</body>
+</html>

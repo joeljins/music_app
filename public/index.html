@@ -49,9 +49,9 @@
                         </tr>
                         <tr>
                             <td style="font-size: large; text-align:center;">
-        <button onclick="viewAll('viewAllSongs.html')">View All Songs</button>
-        <button onclick="viewAll('viewAllArtists.html')">View All Artists</button>
-        <button onclick="viewAll('viewAllAlbums.html')">View All Albums</button>
+                            <button onclick="viewAll('viewAllSongs.html')">View All Songs</button>
+                            <button onclick="viewAll('viewAllArtists.html')">View All Artists</button>
+                            <button onclick="viewAll('viewAllAlbums.html')">View All Albums</button>
                             </td>
                         </tr>
                     </table>
@@ -160,7 +160,7 @@
 
             // Get the results
             const resultsDiv = document.getElementById("results");
-            resultsDiv.innerHTML = ""; // Clear previous results
+            resultsDiv.innerHTML = ""; 
 
             // Display results or message
             if (results.error) {
@@ -183,7 +183,10 @@
                         link.textContent = item.result;
                         listItem.appendChild(link);
                     } else if (item.type === "song") {
-                        listItem.textContent = item.result;
+                        const link = document.createElement("a");
+                        link.href = `playSong.html?song_id=${encodeURIComponent(item.song_id)}`;
+                        link.textContent = item.result;
+                        listItem.appendChild(link);
                     }
 
                     list.appendChild(listItem);
